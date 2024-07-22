@@ -1,0 +1,44 @@
+from tqdm import tqdm
+import random
+import string
+
+def generate_random_code(length=5):
+    """Generate a random 5-letter alphabetic code in lowercase."""
+    return ''.join(random.choices(string.ascii_lowercase, k=length))
+
+def generate_company_name(nouns, adjectives, suffixes):
+    """Generate a unique company name."""
+    noun = random.choice(nouns)
+    adjective = random.choice(adjectives)
+    suffix = random.choice(suffixes)
+    code = generate_random_code()
+    return f"{adjective} {noun} {suffix} {code}"
+
+def generate_company_names(nouns, adjectives, suffixes, count):
+    """Generate a set of unique company names with progress bar."""
+    max_combinations = len(nouns) * len(adjectives) * len(suffixes) * (26**5)  # 26 letters, 5 positions
+    requested_count = min(count, max_combinations)
+    
+    if requested_count == max_combinations:
+        print("Warning: Requested count reaches the maximum number of unique combinations. Generating maximum possible unique names.")
+    
+    unique_names = set()
+    with tqdm(total=requested_count, desc="Generating company names") as pbar:
+        while len(unique_names) < requested_count:
+            name = generate_company_name(nouns, adjectives, suffixes)
+            if name not in unique_names:
+                unique_names.add(name)
+                pbar.update(1)
+    
+    return unique_names
+
+# Example usage
+nouns = ["Tech", "Solutions", "Systems"]
+adjectives = ["Advanced", "Creative", "Innovative"]
+suffixes = ["Ltd", "LLC", "Co"]
+
+# Generate a smaller number for demonstration; adjust as needed
+company_names = generate_company_names(nouns, adjectives, suffixes, 100)
+
+for name in list(company_names)[:10]:
+    print(name)
